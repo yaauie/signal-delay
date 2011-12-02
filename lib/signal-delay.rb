@@ -15,14 +15,14 @@ module Signal
             trap_cache[signal] = Signal.trap(signal) do
               signal_queue.push(signal)
             end
-          rescue ArgumentError => e # Some traps cannot be set.
+          rescue ArgumentError # Some traps cannot be set.
             # SIGVTALRM - reserved by Ruby for thread-switching
           end
           nil
         end
 
         yield
-        
+
       ensure
         trap_cache.each_pair { |*trap| Signal.trap(*trap) }
         Process.kill(signal_queue.shift,Process.pid) until signal_queue.empty?
